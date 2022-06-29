@@ -36,6 +36,9 @@ public abstract class Connector {
     public List<String> getData() throws Exception{
         List<String> sourceData = read();
         List<String> filteredData = applyFilter(sourceData);
+//        for (String fltrDt: filteredData){
+//            System.out.println("Filtered Data : "+fltrDt);
+//        }
         List<String> framedResult = frameResult(filteredData);
         return framedResult;
     }
@@ -82,6 +85,7 @@ public abstract class Connector {
         if (joinCond != null){
             childRecords = filteredChildRcrds.stream().filter(
                     childRecord -> parentRecords.stream().anyMatch(parentRecord -> {
+//                        System.out.println("Parent Record : "+parentRecord);
                         try {
                             return joinCond.evaluateCondition(parentRecord,childRecord);
                         } catch (ParseException e) {
