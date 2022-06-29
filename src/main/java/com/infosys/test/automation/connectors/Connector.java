@@ -82,7 +82,7 @@ public abstract class Connector {
         JSONParser jsonParser = new JSONParser();
         List<String> childRecords;
         List<String> framedResult;
-        if (joinCond != null){
+        if (joinCond != null && parentRecords != null && parentRecords.size() > 0){
             childRecords = filteredChildRcrds.stream().filter(
                     childRecord -> parentRecords.stream().anyMatch(parentRecord -> {
 //                        System.out.println("Parent Record : "+parentRecord);
