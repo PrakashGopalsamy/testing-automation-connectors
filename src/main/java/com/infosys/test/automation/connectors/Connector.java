@@ -22,6 +22,10 @@ public abstract class Connector {
 
     protected CondElement joinCond;
 
+    public Connector(){
+
+    }
+
     public Connector(String sourceName,Properties connectorProperties,
                      List<String> parentRecords, CondElement filterCond,
                      CondElement joinCond){

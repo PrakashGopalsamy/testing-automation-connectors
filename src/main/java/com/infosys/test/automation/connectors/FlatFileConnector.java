@@ -14,7 +14,11 @@ import org.json.simple.parser.ParseException;
 
 public class FlatFileConnector extends Connector implements ConnectorProvider{
 
-    private final String PROVIDER_NAME="file";
+    private final String PROVIDER_NAME="flatfile";
+
+    public FlatFileConnector(){
+
+    }
 
     public FlatFileConnector(String sourceName,Properties connectorProperties,
                              List<String> parentRecords, CondElement filterCond,
