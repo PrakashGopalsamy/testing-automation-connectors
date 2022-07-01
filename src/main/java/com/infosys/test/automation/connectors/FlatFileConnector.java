@@ -5,12 +5,9 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import com.infosys.test.automation.dto.CondElement;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 public class FlatFileConnector extends Connector implements ConnectorProvider{
 
