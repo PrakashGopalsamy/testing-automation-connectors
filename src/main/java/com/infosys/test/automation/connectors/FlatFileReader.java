@@ -6,21 +6,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import com.infosys.test.automation.dto.CondElement;
+import com.infosys.test.automation.dto.CondConfig;
 import org.json.simple.JSONObject;
 
-public class FlatFileConnector extends Connector implements ConnectorProvider{
+public class FlatFileReader extends DataReader implements ReaderProvider {
 
-    private final String PROVIDER_NAME="flatfile";
+    private final String READER_NAME ="flat_file_reader";
 
-    public FlatFileConnector(){
+    public FlatFileReader(){
 
     }
 
-    public FlatFileConnector(String sourceName,Properties connectorProperties,
-                             List<String> parentRecords, CondElement filterCond,
-                             CondElement joinCond){
-        super(sourceName,connectorProperties,parentRecords,filterCond,joinCond);
+    public FlatFileReader(String sourceName, Properties connectorProperties,
+                          List<String> parentRecords, CondConfig filterConfig,
+                          CondConfig joinConfig){
+        super(sourceName,connectorProperties,parentRecords,filterConfig,joinConfig);
     }
 
     protected List<String> read() throws Exception{
@@ -43,8 +43,8 @@ public class FlatFileConnector extends Connector implements ConnectorProvider{
     }
 
     @Override
-    public String providerName() {
-        return PROVIDER_NAME;
+    public String readerName() {
+        return READER_NAME;
     }
 
 }

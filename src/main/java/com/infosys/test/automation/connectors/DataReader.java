@@ -1,6 +1,6 @@
 package com.infosys.test.automation.connectors;
 
-import com.infosys.test.automation.dto.CondElement;
+import com.infosys.test.automation.dto.CondConfig;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-public abstract class Connector {
+public abstract class DataReader {
 
     protected String sourceName;
 
@@ -18,22 +18,22 @@ public abstract class Connector {
 
     protected List<String> parentRecords;
 
-    protected CondElement filterCond;
+    protected CondConfig filterConfig;
 
-    protected CondElement joinCond;
+    protected CondConfig joinConfig;
 
-    public Connector(){
+    public DataReader(){
 
     }
 
-    public Connector(String sourceName,Properties connectorProperties,
-                     List<String> parentRecords, CondElement filterCond,
-                     CondElement joinCond){
+    public DataReader(String sourceName, Properties connectorProperties,
+                      List<String> parentRecords, CondConfig filterConfig,
+                      CondConfig joinConfig){
         this.sourceName = sourceName;
         this.connectorProperties = connectorProperties;
         this.parentRecords = parentRecords;
-        this.filterCond = filterCond;
-        this.joinCond = joinCond;
+        this.filterConfig = filterConfig;
+        this.joinConfig = joinConfig;
     }
 
 
@@ -51,12 +51,12 @@ public abstract class Connector {
 
     protected List<String> applyFilter(List<String> childRecords){
         List<String> filteredRecords = null;
-        if (filterCond != null){
+        if (filterConfig != null){
             if (parentRecords != null && parentRecords.size() > 0){
                 filteredRecords = childRecords.stream().filter(
                         childRecord -> parentRecords.stream().anyMatch(parentRecord -> {
                             try {
-                                return filterCond.evaluateCondition(parentRecord,childRecord);
+                                return filterConfig.evaluateCondition(parentRecord,childRecord);
                             } catch (ParseException e) {
                                 e.printStackTrace();
                                 return false;
@@ -67,7 +67,7 @@ public abstract class Connector {
             else{
                 filteredRecords = childRecords.stream().filter(childRecord -> {
                     try {
-                        return filterCond.evaluateCondition(null,childRecord);
+                        return filterConfig.evaluateCondition(null,childRecord);
                     } catch (ParseException e) {
                         e.printStackTrace();
                         return false;
@@ -86,12 +86,12 @@ public abstract class Connector {
         JSONParser jsonParser = new JSONParser();
         List<String> childRecords;
         List<String> framedResult;
-        if (joinCond != null && parentRecords != null && parentRecords.size() > 0){
+        if (joinConfig != null && parentRecords != null && parentRecords.size() > 0){
             childRecords = filteredChildRcrds.stream().filter(
                     childRecord -> parentRecords.stream().anyMatch(parentRecord -> {
 //                        System.out.println("Parent Record : "+parentRecord);
                         try {
-                            return joinCond.evaluateCondition(parentRecord,childRecord);
+                            return joinConfig.evaluateCondition(parentRecord,childRecord);
                         } catch (ParseException e) {
                             e.printStackTrace();
                             return false;
@@ -104,7 +104,7 @@ public abstract class Connector {
                     List<String> matchedChildRecords = childRecords.stream().filter(
                             childRecord -> {
                                 try {
-                                    return joinCond.evaluateCondition(parentRecord, childRecord);
+                                    return joinConfig.evaluateCondition(parentRecord, childRecord);
                                 } catch (ParseException e) {
                                     e.printStackTrace();
                                     return false;
