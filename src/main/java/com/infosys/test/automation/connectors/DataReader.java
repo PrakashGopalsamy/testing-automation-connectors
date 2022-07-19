@@ -1,5 +1,7 @@
 package com.infosys.test.automation.connectors;
 
+import com.infosys.test.automation.connectors.exceptions.InvalidCnnctPropException;
+import com.infosys.test.automation.constants.ConnectorConstants;
 import com.infosys.test.automation.dto.CondConfig;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -28,26 +30,26 @@ public abstract class DataReader {
 
     public DataReader(String sourceName, Properties connectorProperties,
                       List<String> parentRecords, CondConfig filterConfig,
-                      CondConfig joinConfig){
+                      CondConfig joinConfig) throws InvalidCnnctPropException {
         this.sourceName = sourceName;
         this.connectorProperties = connectorProperties;
         this.parentRecords = parentRecords;
         this.filterConfig = filterConfig;
         this.joinConfig = joinConfig;
+        validatePropeties();
     }
 
 
     public List<String> getData() throws Exception{
         List<String> sourceData = read();
         List<String> filteredData = applyFilter(sourceData);
-//        for (String fltrDt: filteredData){
-//            System.out.println("Filtered Data : "+fltrDt);
-//        }
         List<String> framedResult = frameResult(filteredData);
         return framedResult;
     }
 
     protected abstract List<String> read() throws Exception;
+
+    protected abstract boolean validatePropeties() throws InvalidCnnctPropException;
 
     protected List<String> applyFilter(List<String> childRecords){
         List<String> filteredRecords = null;
@@ -82,7 +84,7 @@ public abstract class DataReader {
     }
 
     protected List<String> frameResult(List<String> filteredChildRcrds){
-        String[] columns = connectorProperties.getProperty("sourcecolumns").split(",");
+        String[] columns = connectorProperties.getProperty(ConnectorConstants.SOURCECOLUMNS).split(",");
         JSONParser jsonParser = new JSONParser();
         List<String> childRecords;
         List<String> framedResult;

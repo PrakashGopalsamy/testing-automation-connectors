@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import com.infosys.test.automation.connectors.exceptions.InvalidCnnctPropException;
+import com.infosys.test.automation.constants.ConnectorConstants;
 import com.infosys.test.automation.dto.CondConfig;
 import org.json.simple.JSONObject;
 
@@ -19,15 +21,15 @@ public class FlatFileReader extends DataReader implements ReaderProvider {
 
     public FlatFileReader(String sourceName, Properties connectorProperties,
                           List<String> parentRecords, CondConfig filterConfig,
-                          CondConfig joinConfig){
+                          CondConfig joinConfig) throws InvalidCnnctPropException {
         super(sourceName,connectorProperties,parentRecords,filterConfig,joinConfig);
     }
 
     protected List<String> read() throws Exception{
         List<String> data = new ArrayList<>();
-        String fileName = connectorProperties.getProperty("filename");
-        String[] columns = connectorProperties.getProperty("sourcecolumns").split(",");
-        String delimiter = connectorProperties.getProperty("columndelimiter");
+        String fileName = connectorProperties.getProperty(ConnectorConstants.FILENAME);
+        String[] columns = connectorProperties.getProperty(ConnectorConstants.SOURCECOLUMNS).split(",");
+        String delimiter = connectorProperties.getProperty(ConnectorConstants.COLUMNDELIMITER);
         BufferedReader bufferedReader = new BufferedReader(new FileReader(fileName));
         String line = bufferedReader.readLine();
         while(line != null){
@@ -40,6 +42,31 @@ public class FlatFileReader extends DataReader implements ReaderProvider {
             line = bufferedReader.readLine();
         }
         return data;
+    }
+
+    @Override
+    protected boolean validatePropeties() throws InvalidCnnctPropException {
+        boolean validProps = true;
+        String fileName = connectorProperties.getProperty(ConnectorConstants.FILENAME);
+        String columns = connectorProperties.getProperty(ConnectorConstants.SOURCECOLUMNS);
+        String delimiter = connectorProperties.getProperty(ConnectorConstants.COLUMNDELIMITER);
+        StringBuilder exceptionMessageBuilder = new StringBuilder();
+        if (fileName == null || fileName.trim().length() == 0){
+            exceptionMessageBuilder.append("The required property "+ConnectorConstants.FILENAME+" is not been provided\n");
+            validProps=false;
+        }
+        if (columns == null || columns.trim().length() == 0){
+            exceptionMessageBuilder.append("The required property "+ConnectorConstants.SOURCECOLUMNS+" is not been provided\n");
+            validProps=false;
+        }
+        if (delimiter == null || delimiter.trim().length() == 0){
+            exceptionMessageBuilder.append("The required property "+ConnectorConstants.COLUMNDELIMITER+" is not been provided\n");
+            validProps=false;
+        }
+        if (!validProps){
+            throw new InvalidCnnctPropException(exceptionMessageBuilder.toString());
+        }
+        return validProps;
     }
 
     @Override
