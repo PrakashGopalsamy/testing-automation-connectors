@@ -63,6 +63,10 @@ public class FlatFileReader extends DataReader implements ReaderProvider {
             exceptionMessageBuilder.append("The required property "+ConnectorConstants.COLUMNDELIMITER+" is not been provided\n");
             validProps=false;
         }
+        if (this.parentRecords != null && this.joinConfig == null){
+            exceptionMessageBuilder.append("The required join condition to join the child source with parent source is not been provided\n");
+            validProps=false;
+        }
         if (!validProps){
             throw new InvalidCnnctPropException(exceptionMessageBuilder.toString());
         }
